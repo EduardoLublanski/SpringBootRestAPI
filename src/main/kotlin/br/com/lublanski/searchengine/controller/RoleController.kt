@@ -25,7 +25,10 @@ class RoleController(val roleService : RoleService) {
     @PostMapping()
     fun list() : List<Role> {
 
-        return roleService.listAll()
+        return roleService.listAllRoles()
 
     }
+
+
+
 }

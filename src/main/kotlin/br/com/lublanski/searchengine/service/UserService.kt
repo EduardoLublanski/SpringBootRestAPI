@@ -2,6 +2,7 @@ package br.com.lublanski.searchengine.service
 
 import br.com.lublanski.searchengine.datamap.User
 import br.com.lublanski.searchengine.datamap.UserDetail
+import br.com.lublanski.searchengine.exception.UserNotFoundException
 import br.com.lublanski.searchengine.repository.RoleRepository
 import br.com.lublanski.searchengine.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
@@ -17,9 +18,9 @@ class UserService(
     val roleRepository: RoleRepository
 ) : UserDetailsService {
 
-    fun createUser(user : User) : User {
-        user.password = passwordEncoder.encode(user.password)
-        return userRepository.save(user)
+    fun createUser(newUser : User) : User {
+        validateUserExistence(newUser.username)
+        return userRepository.save(newUser)
     }
 
     fun getUserById(id : String) : Optional<User> {
@@ -27,22 +28,29 @@ class UserService(
     }
 
     fun getAllUsers(): List<User> {
+        println(userRepository.findAll().get(0).roles.get(0))
         return userRepository.findAll()
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {
-        val user = userRepository.findByusername(username)
+        val user = userRepository.findByusername(username).orElseThrow {
+            UserNotFoundException("user ${username} not found")
+        }
         return UserDetail(user)
     }
 
-    fun addRole(userId : String, roleName : String) : User {
+    fun addRoleToUser(userId : String, roleName : String) : User {
 
-        val role = roleRepository.findByRoleName(roleName)
+        val role = roleRepository.findByRoleName(roleName).get()
         userRepository.addRoleToUser(userId, role)
 
         val user : Optional<User> = userRepository.findById(userId)
         return user.get()
 
     }
-
+    private fun validateUserExistence(username : String) {
+        userRepository.findByusername(username).orElseThrow {
+            UserNotFoundException("user ${username} not found")
+        }
+    }
 }

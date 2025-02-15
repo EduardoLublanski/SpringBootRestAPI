@@ -45,11 +45,12 @@ class UserController(val userService: UserService) {
     @PostMapping("/{userId}/role-register")
     fun userRoleAssign(
         @PathVariable userId : String,
-        @RequestParam(required = true) name : String
+        @RequestParam(required = true) roleName : String
     ) : ResponseEntity<User> {
 
-        val user = userService.addRole()
+        val user = userService.addRoleToUser(userId,roleName)
 
+        return ResponseEntity.status(HttpStatus.OK).body(user)
     }
 
 }
