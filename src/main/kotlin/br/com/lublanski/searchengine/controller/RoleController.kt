@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity
 @RequestMapping("/role")
 class RoleController(val roleService : RoleService) {
 
-    @PostMapping("/Register")
+    @PostMapping("/register")
     fun register(@RequestBody @Validated role: Role) : ResponseEntity<Role>{
 
         val newRole = roleService.register(role)

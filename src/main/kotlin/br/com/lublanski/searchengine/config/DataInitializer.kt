@@ -27,7 +27,7 @@ class DataInitializer(
                 val user = User(
                     username = "superadm",
                     password = passwordEncoder.encode("u$3r\$up3r@dm"),
-                    roles = mutableListOf<Role>()
+                    roles = mutableListOf()
                 )
                 val roleSuperAdmFromMongoDB = roleService.roleRepository.findByRoleName(roleSuperAdm.roleName)
                 user.roles.add(roleSuperAdmFromMongoDB.get())
